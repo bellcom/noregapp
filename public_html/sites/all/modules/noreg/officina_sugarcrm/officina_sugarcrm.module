@@ -1,0 +1,233 @@
+<?php
+/**
+ * @file
+ * A description of what your module does.
+ */
+
+// Load helpers
+require_once('functions/helpers.inc');
+
+// Load data files
+require_once('class/SugarBase.inc');
+require_once('class/data/timestamps/loader.inc');
+require_once('class/data/vehicle_tasks/loader.inc');
+require_once('class/data/vehicles/loader.inc');
+
+// Load connector
+require_once('class/Connector.inc');
+
+// Get nusoap library
+require_once("library/nusoap.php");
+
+
+
+/**
+ * Implements menu_hook().
+ * @return array
+ */
+function officina_sugarcrm_menu() {
+
+    $item = array();
+
+    //Admin configuration group
+    $item["admin/config/officina-sugarcrm"] = array(
+      'title' => 'Offcina SugarCRM',
+      'description' => 'Administer SugarCRM settings',
+      'access arguments' => array("user access")
+    );
+
+    //Admin configuration settings
+    $item["admin/config/officina-sugarcrm/manage"] = array(
+      'title' => 'Offcina SugarCRM settings',
+      'description' => 'Manage SugarCRM settings',
+      'access arguments' => array("user access"),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array("officina_sugarcrm_admin_settings_form")
+    );
+
+    return $item;
+}
+
+/**
+ * Implements hook_form()
+ * @param $node
+ * @param $form_state
+ *
+ * @return array
+ */
+function officina_sugarcrm_admin_settings_form($node, &$form_state) {
+    $form = array();
+
+    $form['overview'] = array(
+      '#markup' => t("This interface allows you to manage general SugarCRM settings"),
+      '#prefix' => "<p>",
+      '#suffix' => "</p>"
+    );
+
+    // URL address
+    $form['sugarcrm_url_address'] = array(
+      '#title' => t("URL address"),
+      '#type' => 'textfield',
+      '#description' => t('Ex.: http://crm-system.com/soap.php?wsdl'),
+      '#required' => TRUE,
+      '#default_value' => variable_get("sugarcrm_url_address")
+    );
+
+    // Username
+    $form['sugarcrm_username'] = array(
+      '#title' => t("Username"),
+      '#type' => 'textfield',
+      '#required' => TRUE,
+      '#default_value' => variable_get("sugarcrm_username")
+    );
+
+    // Password
+    $form['sugarcrm_password'] = array(
+      '#title' => t("Password"),
+      '#type' => 'password',
+      '#required' => TRUE,
+      '#default_value' => variable_get("sugarcrm_password")
+    );
+
+    // Max number of rows
+    $form['sugarcrm_max_number_of_rows'] = array(
+      '#title' => t("Rows per run"),
+      '#type' => 'textfield',
+      '#required' => TRUE,
+      '#default_value' => variable_get("sugarcrm_max_number_of_rows", Connector::MAX_NUMBER_OF_ROWS)
+    );
+
+    return system_settings_form($form);
+
+}
+
+/**
+ * Implements hook_cron().
+ */
+function officina_sugarcrm_cron() {
+
+
+    try {
+
+        // Get username and password
+        $username = variable_get('sugarcrm_username');
+        $password = variable_get('sugarcrm_password');
+
+        // Get offsets
+        $timestamp_offset           = variable_get('sugarcrm_timestamp_offset', 0);
+        $vehicle_tasks_offset       = variable_get('sugarcrm_vehicle_tasks_offset', 0);
+        $vehicle_offset             = variable_get('sugarcrm_vehicle_offset', 0);
+
+        // Get maximum number of rows
+        $url_address = variable_get('sugarcrm_url_address', Connector::URL_ADDRESS);
+        $max_number_of_rows = variable_get('sugarcrm_max_number_of_rows', Connector::MAX_NUMBER_OF_ROWS);
+
+        // Get instantiated client
+        $connection = new Connector($url_address, $username, $password);
+        $connection->connect();
+
+
+
+
+
+
+
+
+
+
+        // Get all vehicles
+        $vehicles = $connection->get_vehicles($vehicle_offset, $max_number_of_rows);
+
+
+        // Run through all timestamps
+        foreach ($vehicles as $vehicle) { _sugarcrm_manage_vehicles($vehicle); }
+
+        // Timestamp is null, set null
+        if (count($vehicles) == 0) {
+            $vehicle_offset = 0;
+        }
+        else {
+            $vehicle_offset += $max_number_of_rows;
+        }
+
+        $vehicles = NULL;
+
+        variable_set('sugarcrm_vehicle_offset', $vehicle_offset);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Get all vehicle tasks
+        $vehicle_tasks = $connection->get_vehicle_tasks($vehicle_tasks_offset, $max_number_of_rows);
+
+
+        // Run through all timestamps
+        foreach ($vehicle_tasks as $vehicle_task) { _sugarcrm_manage_vehicle_tasks($vehicle_task); }
+
+        // Timestamp is null, set null
+        if (count($vehicle_tasks) == 0) {
+            $vehicle_tasks_offset = 0;
+        }
+        else {
+            $vehicle_tasks_offset += $max_number_of_rows;
+        }
+
+        $vehicle_tasks = NULL;
+
+        variable_set('sugarcrm_vehicle_tasks_offset', $vehicle_tasks_offset);
+
+
+
+
+
+
+
+
+
+        // Get all timestamps
+        $timestamps = $connection->get_timestamps($timestamp_offset, $max_number_of_rows);
+
+
+        // Run through all timestamps
+        foreach ($timestamps as $timestamp) { _sugarcrm_manage_timestamps($timestamp); }
+
+        // Timestamp is null, set null
+        if (count($timestamps) == 0) {
+            $timestamp_offset = 0;
+        }
+        else {
+            $timestamp_offset += $max_number_of_rows;
+        }
+
+        $timestamps = NULL;
+
+        variable_set('sugarcrm_timestamp_offset', $timestamp_offset);
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+    // An error occured
+    catch (Exception $e) {
+        drupal_set_message($e->getMessage(), 'error');
+    }
+
+}

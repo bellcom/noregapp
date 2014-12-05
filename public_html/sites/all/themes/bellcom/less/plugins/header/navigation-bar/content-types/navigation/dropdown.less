@@ -1,0 +1,93 @@
+// Header
+.header {
+
+    // Navigation bar
+    .header-navigation-bar {
+
+        // Navigation
+        .header-navigation {
+
+            // First layer list indexes
+            > li.header-navigation-dropdown {
+                position: relative;
+
+                // Link
+                > a {
+
+                    // Before and after
+                    &:before,
+                    &:after {
+                        content: "";
+                        position: absolute;
+                        left: 50%;
+                        bottom: @header-navigation-first-layer-dropdown-arrow-bottom-start-position;
+                        height: 1px;
+                        width: @header-navigation-first-layer-dropdown-arrow-size;
+                        background-color: @header-navigation-first-layer-dropdown-arrow-color;
+                        .transition( all @transition-time ease-in-out );
+                    }
+
+                    // Before
+                    &:before {
+                        margin-left: -4px;
+                        -webkit-transform:	rotate(45deg);
+                        -moz-transform:		rotate(45deg);
+                        transform:			rotate(45deg);
+                    }
+
+                    // After
+                    &:after {
+                        margin-left: -1px;
+                        -webkit-transform:	rotate(-45deg);
+                        -moz-transform:		rotate(-45deg);
+                        transform:			rotate(-45deg);
+                    }
+                }
+
+                // Hover state
+                &:hover {
+
+                    // Link
+                    > a {
+
+                        // Before and after
+                        &:before,
+                        &:after {
+                            bottom: @header-navigation-first-layer-dropdown-arrow-bottom-end-position;
+                            opacity: 0;
+                            background-color: @header-navigation-first-layer-dropdown-hover-arrow-color;
+                        }
+                    }
+                }
+
+                // Active
+                &.active {
+
+                    // Link
+                    > a {
+
+                        // Before and after
+                        &:before,
+                        &:after {
+                            background-color: @header-navigation-first-layer-dropdown-active-arrow-color;
+                        }
+                    }
+
+                    // Hover state
+                    &:hover {
+
+                        // Link
+                        > a {
+
+                            // Before and after
+                            &:before,
+                            &:after {
+                                background-color: @header-navigation-first-layer-dropdown-active-hover-arrow-color;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

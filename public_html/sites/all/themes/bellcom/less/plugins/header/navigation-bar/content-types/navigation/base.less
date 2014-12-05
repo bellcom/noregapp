@@ -1,0 +1,68 @@
+// Header
+.header {
+
+    // Navigation bar
+    .header-navigation-bar {
+
+        // Navigation
+        .header-navigation {
+            height: inherit;
+            line-height: inherit;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            // First layer list indexes
+            > li {
+                float: left;
+
+                // Link
+                > a {
+                    display: block;
+                    background-color: @header-navigation-first-layer-link-background-color;
+                    font-family: @header-navigation-first-layer-link-font-family;
+                    font-weight: @header-navigation-first-layer-link-font-weight;
+                    font-size: @header-navigation-first-layer-link-font-size;
+                    color: @header-navigation-first-layer-link-font-color;
+                    padding: @header-navigation-first-layer-link-padding;
+                    text-decoration: none;
+                }
+
+                // Hover state
+                &:hover {
+
+                    // Link
+                    > a {
+                        background-color: @header-navigation-first-layer-link-hover-background-color;
+                        color: @header-navigation-first-layer-link-hover-font-color;
+                    }
+                }
+
+                // Active
+                &.active {
+
+                    // Link
+                    > a {
+                        background-color: @header-navigation-first-layer-link-active-background-color;
+                        color: @header-navigation-first-layer-link-active-font-color;
+                    }
+
+                    // Hover state
+                    &:hover {
+
+                        // Link
+                        > a {
+                            background-color: @header-navigation-first-layer-link-active-hover-background-color;
+                            color: @header-navigation-first-layer-link-active-hover-font-color;
+                        }
+                    }
+                }
+            }
+
+            // Link (all - also in dropdowns)
+            a {
+                white-space: nowrap;
+            }
+        }
+    }
+}

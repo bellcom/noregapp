@@ -1,0 +1,10 @@
+// Links
+a {
+
+    // Normal, hover and active state
+    &,
+    &:hover,
+    &:active {
+        .transition( ~"border-color @{transition-time} ease-in-out, color @{transition-time} ease-in-out, background-color @{transition-time} ease-in-out" );
+    }
+}

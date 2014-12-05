@@ -1,0 +1,108 @@
+// |--------------------------------------------------------------------------
+// | Tablet
+// |--------------------------------------------------------------------------
+
+
+	@media (min-width: @screen-sm-min) {
+
+
+		// Modal
+		.modal-dialog {
+
+
+
+			// Extra small
+			&.modal-xs {
+
+			}
+
+
+			// Small
+			&.modal-s {
+
+			}
+
+
+			// Large
+			&.modal-l {
+
+			}
+
+
+			// Extra large
+			&.modal-xl {
+
+			}
+
+
+			// Full width
+			&.modal-full {
+
+			}
+		}
+	}
+
+
+
+
+// |--------------------------------------------------------------------------
+// | Desktop
+// |--------------------------------------------------------------------------
+
+
+	@media (min-width: @screen-md-min) {
+
+
+		// Modal
+		.modal-dialog {
+			width: 500px;
+
+
+			// Extra small
+			&.modal-xs {
+				width: 250px;
+			}
+
+
+			// Small
+			&.modal-s {
+				width: 400px;
+			}
+
+
+			// Large
+			&.modal-l {
+				width: 700px;
+			}
+
+
+			// Extra large
+			&.modal-xl {
+				width: 1000px;
+			}
+
+
+			// Full width
+			&.modal-full {
+				position: absolute;
+				top: 30px;
+				bottom: 30px;
+				left: 30px;
+				right: 30px;
+				width: auto;
+				margin: 0;
+
+
+				// Modal content
+				.modal-content {
+					position: absolute;
+					top: 0;
+					bottom: 0;
+					left: 0;
+					right: 0;
+					width: auto;
+					margin: 0;
+				}
+			}
+		}
+	}

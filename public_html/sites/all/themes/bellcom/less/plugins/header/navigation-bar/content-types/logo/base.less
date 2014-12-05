@@ -1,0 +1,28 @@
+// Header
+.header {
+
+    // Navigation bar
+    .header-navigation-bar {
+
+        // Logo
+        .header-logo {
+            display: block;
+            min-height: 100%;
+            height: inherit;
+            line-height: inherit;
+            width: @header-navigation-bar-logo-width;
+
+            // Link
+            a {
+                display: block;
+                height: 100%;
+                width: 100%;
+                min-height: @header-navigation-bar-logo-height;
+                line-height: inherit;
+                .img-retina( "@{path-image}logo-1x.png", "@{path-image}logo-2x.png", @header-navigation-bar-logo-width, @header-navigation-bar-logo-height );
+                background-position: center center;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+}

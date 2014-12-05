@@ -1,0 +1,21 @@
+// |--------------------------------------------------------------------------
+// | Modalizr
+// |--------------------------------------------------------------------------
+// |
+
+
+	// Modalizr
+	#modalizr {
+
+
+		// Body
+		.modal-body {
+			padding: 0;
+			padding-bottom: @modal-body-bottom-spacing;
+			color: @modal-body-font-color;
+			font-weight: @modal-body-font-weight;
+			.transition( all @transition-time ease-in-out );
+
+			&:extend( .clearfix all );
+		}
+	}

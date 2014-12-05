@@ -1,0 +1,22 @@
+// Footer
+.footer {
+    position: relative;
+    background-color: #212121;
+    padding-top: 40px;
+    padding-bottom: 15px;
+    border: none;
+
+    // Arrow
+    &:after {
+        position: absolute;
+        content: "";
+        left: 50%;
+        width: 0;
+        height: 0;
+        top: 0;
+        border-style: solid;
+        margin-left: -12.5px;
+        border-width: 13px 12.5px 0;
+        border-color: @body-bg transparent transparent;
+    }
+}

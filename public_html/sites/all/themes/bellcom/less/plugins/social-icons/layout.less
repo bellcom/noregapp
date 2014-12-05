@@ -1,0 +1,46 @@
+// Social icons
+.social-icons {
+    list-style: none;
+    overflow: hidden;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+
+    // Add transition
+    &,
+    li,
+    a,
+    .social-icon {
+        .transition( all @transition-time ease-in-out );
+    }
+
+    // List item
+    li {
+        display: inline-block;
+        font-size: 20px;
+        padding-right: 5px;
+        list-style: none;
+        text-align: center;
+
+        // Last list item
+        &:last-child {
+            padding-right: 0px;
+        }
+
+        // Link
+        a {
+            display: block;
+            width: 20px;
+            height: 20px;
+            background-color: transparent;
+            overflow: hidden;
+
+            // Social icon
+            .social-icon {
+                font-size: 14px;
+                line-height: inherit;
+                color: #fff;
+            }
+        }
+    }
+}

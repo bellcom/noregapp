@@ -1,0 +1,18 @@
+<?php
+/**
+ * Implements hook_install()
+ */
+function economic_install() {
+    variable_set("economic_agreementnumber", "");
+    variable_set("economic_username", "");
+    variable_set("economic_password", "");
+}
+
+/**
+ * Implements hook_uninstall
+ */
+function economic_uninstall() {
+    variable_del("economic_agreementnumber");
+    variable_del("economic_username");
+    variable_del("economic_password");
+}

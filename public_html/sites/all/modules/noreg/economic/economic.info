@@ -1,0 +1,6 @@
+name = Economic
+description = Syncing data with e-conomics
+core = 7.x
+version = 7.x
+configure = admin/config/economic/manage
+dependencies[] = e_conomic_user_fields

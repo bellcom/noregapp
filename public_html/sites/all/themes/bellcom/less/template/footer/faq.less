@@ -1,0 +1,65 @@
+// Footer
+.footer {
+
+    // FAQ and contact form
+    .footer-faq-and-contact-form {
+
+        // FAQ
+        .footer-faq {
+
+            .panel-group {
+
+                // Panel container
+                .panel {
+                    margin-bottom: 5px;
+                    .box-shadow( none );
+
+                    // Heading and body
+                    .panel-heading,
+                    .panel-body {
+                        background: transparent !important;
+                        border-radius: 0;
+                        border: 0;
+                    }
+
+                    // Heading
+                    .panel-heading {
+                        padding: 7px 0;
+                        border: none;
+
+                        .panel-title {
+                            min-height: 25px;
+                            line-height: 25px;
+                            padding-left: 35px;
+                            background: url( "../img/faq-icon.png" ) top left no-repeat;
+
+                            // Open
+                            a {
+                                color: @brand-primary;
+                                text-decoration: underline;
+
+                                // Closed
+                                &.collapsed {
+                                    text-decoration: none;
+                                    color: #9aa9b8;
+
+                                    // Hover and focus
+                                    &:hover,
+                                    &:focus {
+                                        color: #c7d3df;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Body
+                    .panel-body {
+                        color: #fff;
+                        padding: 0 0 5px 35px;
+                    }
+                }
+            }
+        }
+    }
+}

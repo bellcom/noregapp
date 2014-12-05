@@ -1,0 +1,40 @@
+
+
+	// Normal
+	body {
+		font-weight: @font-weight;
+	}
+
+
+	// Light weighted (thin)
+	.light {
+		font-weight: @font-weight-light;
+	}
+
+
+	// Strong weighted (bold)
+	strong,
+	.strong {
+		font-weight: @font-weight-bold;
+	}
+
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: @headings-font-weight;
+
+		// Light weighted (thin)
+		&.light {
+			font-weight: @headings-font-weight-light;
+		}
+
+		// Strong weighted (bold)
+		strong,
+		&.strong {
+			font-weight: @headings-font-weight-strong;
+		}
+	}

@@ -1,0 +1,53 @@
+// Header
+.header {
+
+    // Top
+    .header-top {
+
+        // Contact information
+        .contact-information {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            background-color: @header-top-contact-information-background-color;
+            .clearfix();
+
+            // List item
+            > li {
+                padding-right: @header-top-contact-information-item-spacing;
+                float: left;
+
+                color: @header-top-contact-information-font-color;
+
+                // Link
+                a {
+                    color: @header-top-contact-information-link-color;
+
+                    // Hover state
+                    &:hover {
+                        color: @header-top-contact-information-link-hover-color;
+                    }
+                }
+
+                // Text and link
+                &,
+                a {
+                    font-family: @header-top-contact-information-font-family;
+                    font-size: @header-top-contact-information-font-size;
+                }
+
+                // Icon
+                .icon {
+                    color: @header-top-contact-information-icon-font-color;
+                    font-size: @header-top-contact-information-icon-font-size;
+                    margin-right: 3px;
+                }
+
+                // Last list item
+                &:last-child {
+                    padding-right: 0;
+                }
+            }
+        }
+    }
+}

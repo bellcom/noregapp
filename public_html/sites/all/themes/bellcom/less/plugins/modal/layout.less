@@ -1,0 +1,33 @@
+// |--------------------------------------------------------------------------
+// | Modalizr
+// |--------------------------------------------------------------------------
+// |
+
+
+	// Modalizr
+	#modalizr {
+
+
+		// Dialog
+		.modal-dialog {
+			position: absolute;
+			top: 40%;
+			left: 0;
+			right: 0;
+		}
+
+
+		// Content
+		.modal-content {
+			background-color: @modal-background-color-fallback;
+			background-color: @modal-background-color;
+			border-color: @modal-border-color-fallback;
+			border-color: @modal-border-color;
+			border-width: @modal-border-width;
+			border-style: solid;
+			border-radius: @modal-border-radius;
+			padding: @modal-inner-padding;
+			.box-shadow( ~"@{modal-box-shadow}" );
+			.transition( all @transition-time ease-in-out );
+		}
+	}

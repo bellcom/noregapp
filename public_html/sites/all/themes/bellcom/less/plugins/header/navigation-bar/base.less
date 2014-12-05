@@ -1,0 +1,19 @@
+// Header
+.header {
+
+    // Navigation bar
+    .header-navigation-bar {
+        height: @header-navigation-bar-height;
+        line-height: @header-navigation-bar-height;
+        background-color: @header-navigation-bar-background-color;
+        background-color: @header-navigation-bar-background-color-rgba;
+
+        // Lets all elements inherit the height and line height
+        .container,
+        .row,
+        .navigation-bar-content {
+            height: inherit;
+            line-height: inherit;
+        }
+    }
+}

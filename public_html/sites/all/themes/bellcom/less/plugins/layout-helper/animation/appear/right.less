@@ -1,0 +1,32 @@
+	// Appear from right
+	.animation-appear-from-right {
+		opacity: 0;
+
+		&.animation-start {
+			animation: .8s cubic-bezier( 1, 0 ,0 ,1 ) appearFromRight;
+			-webkit-animation: .8s cubic-bezier( 1, 0, 0, 1 ) appearFromRight;
+			opacity: 1 !important;
+		}
+	}
+
+	@keyframes appearFromRight {
+		from {
+			opacity: 0;
+			transform: translateX( 100px );
+		}
+		to {
+			opacity: 1;
+			transform: translateX( 0 );
+		}
+	}
+	
+	@-webkit-keyframes appearFromRight {
+		from {
+			opacity: 0;
+			-webkit-transform: translateX( 100px );
+		}
+		to {
+			opacity: 1;
+			-webkit-transform: translateX( 0 );
+		}
+	}

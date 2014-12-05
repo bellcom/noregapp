@@ -1,0 +1,83 @@
+name                                = "Bellcom"
+description                         = "<strong>It's even better than good.</strong><br/>The beautiful, yet simple layout makes the theme ideal for subtheming.<br/>Packed with the latest technology, <i>Bellcom</i> enhances your workflow and improves your website significantly. Because it's built with the highest level of code-quality there is no longer any limitations for what can be achieved."
+base theme                          = "bootstrap"
+core                                = "7.x"
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+regions[navigation]                 = 'Navigation'
+regions[header]                     = 'Top Bar'
+regions[highlighted]                = 'Highlighted'
+regions[help]                       = 'Help'
+regions[content]                    = 'Content'
+regions[sidebar_first]              = 'Left sidebar'
+regions[sidebar_second]             = 'Right sidebar'
+regions[footer]                     = 'Footer'
+regions[page_top]                   = 'Page top'
+regions[page_bottom]                = 'Page bottom'
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Stylesheets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+stylesheets[all][]                  = 'css/stylesheet.css'
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Scripts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Vendor scripts
+scripts[]                           = 'vendor/bootstrap.js'
+scripts[]                           = 'vendor/helper.js'
+scripts[]                           = 'vendor/modalizr.min.js'
+scripts[]                           = 'vendor/timetracker.min.js'
+scripts[]                           = 'vendor/skrollr.min.js'
+scripts[]                           = 'vendor/flexnav.min.js'
+scripts[]                           = 'vendor/hover-intent.min.js'
+
+; Main
+scripts[]                           = 'js/main.js'
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Contact information
+settings[address]                   = 'Bredgade 20'
+settings[zipcode]                   = '6000'
+settings[city]                      = 'Kolding'
+settings[phone_readable]            = '(+45) 70 26 00 85'
+settings[phone]                     = '004570260085'
+settings[email]                     = 'support@bellcom.dk'
+settings[skype]                     = 'skype_account_name'
+settings[working_time]              = 'Monday - Friday 9:00 - 21:00'
+
+; Social links
+settings[facebook]                  = 0
+settings[facebook_uri]              = 'https://www.facebook.com/bellcomdk'
+settings[twitter]                   = 0
+settings[twitter_uri]               = 'https://twitter.com/bellcomdk'
+settings[linkedin]                  = 0
+settings[linkedin_uri]              = 'https://www.linkedin.com/company/bellcom'
+settings[instagram]                 = 0
+settings[instagram_uri]             = 'http://www.instagram.com/your-company'
+settings[pinterest]                 = 0
+settings[pinterest_uri]             = 'http://www.pinterest.com/your-company'
+settings[vimeo]                     = 0
+settings[vimeo_uri]                 = 'http://www.vimeo.com/your-company'
+settings[youtube]                   = 0
+settings[youtube_uri]               = 'http://www.youtube.com/your-company'
+
+
+; Disable BootstrapCDN so the compiled LESS source files can be used.
+settings[bootstrap_cdn]             = ''

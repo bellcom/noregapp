@@ -1,0 +1,34 @@
+
+
+	// Has error
+	.has-error {
+
+
+		// Form control
+		.form-control {
+
+		
+			// Normal, hover and focus
+			&,
+			&:hover,
+			&:focus {
+				border-color: @form-helper-has-error-border-color;
+				.transition(border-color @transition-time ease-in-out);
+				.box-shadow(none);
+			}
+
+
+		    // Disabled and readonly
+		    &[disabled],
+		    &[readonly] {
+
+		
+				// Normal, hover and focus
+		    	&,
+		    	&:hover,
+		    	&:focus {
+			        border-color: @form-helper-has-error-border-color;
+		    	}
+		    }
+		}
+	}

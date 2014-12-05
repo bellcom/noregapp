@@ -1,0 +1,32 @@
+	// Appear from top
+	.animation-appear-from-top {
+		opacity: 0;
+
+		&.animation-start {
+			-webkit-animation: .8s cubic-bezier( 1, 0, 0, 1 ) appearFromTop;
+			animation: .8s cubic-bezier( 1, 0, 0, 1 ) appearFromTop;
+			opacity: 1 !important;
+		}
+	}
+
+	@keyframes appearFromTop {
+		from {
+			opacity: 0;
+			transform: translateY( -100px );
+		}
+		to {
+			opacity: 1;
+			transform: translateY( 0 );
+		}
+	}
+	
+	@-webkit-keyframes appearFromTop {
+		from {
+			opacity: 0;
+			-webkit-transform: translateY( -100px );
+		}
+		to {
+			opacity: 1;
+			-webkit-transform: translateY( 0 );
+		}
+	}

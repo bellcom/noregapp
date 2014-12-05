@@ -1,0 +1,41 @@
+<?php
+
+
+/**
+ * Implements hook_install()
+ */
+function officina_sugarcrm_install() {
+
+    // URL address
+    variable_set("sugarcrm_url_address", "");
+
+    // Username
+    variable_set("sugarcrm_username", "");
+
+    // Password
+    variable_set("sugarcrm_password", "");
+
+    // Max number of rows
+    variable_set("sugarcrm_max_number_of_rows", "50");
+
+}
+
+
+/**
+ * Implements hook_uninstall
+ */
+function officina_sugarcrm_uninstall() {
+
+    // URL address
+    variable_del("sugarcrm_url_address");
+
+    // Username
+    variable_del("sugarcrm_username");
+
+    // Password
+    variable_del("sugarcrm_password");
+
+    // Max number of rows
+    variable_del("sugarcrm_max_number_of_rows");
+
+}

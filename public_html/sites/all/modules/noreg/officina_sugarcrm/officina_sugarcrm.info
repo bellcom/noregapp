@@ -1,0 +1,5 @@
+name            = Officina SugarCRM
+description     = Grabs data from crm.noreg.dk
+core            = 7.x
+version         = 7.x
+configure       = admin/config/officina-sugarcrm/manage

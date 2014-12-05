@@ -1,0 +1,35 @@
+// Header
+.header {
+
+    // Top
+    .header-top {
+
+        // Social links
+        .social-links {
+            background-color: @header-top-social-links-background-color;
+
+            // List item
+            > li {
+                padding-right: @header-top-social-links-spacing;
+
+                // Link
+                a {
+                    height: @header-top-social-links-height;
+                    width: @header-top-social-links-width;
+                    line-height: @header-top-social-links-height;
+                    color: @header-top-social-links-font-color;
+
+                    // Icon
+                    .icon {
+                        font-size: @header-top-social-links-font-size;
+                    }
+                }
+
+                // Last list item
+                &:last-child {
+                    padding-right: 0;
+                }
+            }
+        }
+    }
+}

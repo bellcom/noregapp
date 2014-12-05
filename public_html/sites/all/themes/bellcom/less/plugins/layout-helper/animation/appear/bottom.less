@@ -1,0 +1,32 @@
+	// Appear from bottom
+	.animation-appear-from-bottom {
+		opacity: 0;
+
+		&.animation-start {
+			-webkit-animation: .8s cubic-bezier( 1, 0, 0, 1 ) appearFromBottom;
+			animation: .8s cubic-bezier( 1, 0, 0, 1 ) appearFromBottom;
+			opacity: 1 !important;
+		}
+	}
+
+	@keyframes appearFromBottom {
+		from {
+			opacity: 0;
+			transform: translateY( 100px );
+		}
+		to {
+			opacity: 1;
+			transform: translateY( 0 );
+		}
+	}
+	
+	@-webkit-keyframes appearFromBottom {
+		from {
+			opacity: 0;
+			-webkit-transform: translateY( 100px );
+		}
+		to {
+			opacity: 1;
+			-webkit-transform: translateY( 0 );
+		}
+	}

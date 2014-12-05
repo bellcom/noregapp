@@ -1,0 +1,36 @@
+// Header
+.header {
+
+    // Top
+    .header-top {
+        height: @header-top-height;
+        line-height: @header-top-height;
+        background-color: @header-top-background-color;
+        background-color: @header-top-background-color-rgba;
+
+        color: @header-top-font-color;
+
+        // Link
+        a {
+            color: @header-top-link-color;
+
+            // Hover state
+            &:hover {
+                color: @header-top-link-hover-color;
+            }
+        }
+
+        // Text and links
+        &,
+        a {
+            font-family: @header-top-font-family;
+            font-size: @header-top-font-size;
+        }
+
+        // Icon
+        .icon {
+            color: @header-top-icon-font-color;
+            font-size: @header-top-icon-font-size;
+        }
+    }
+}

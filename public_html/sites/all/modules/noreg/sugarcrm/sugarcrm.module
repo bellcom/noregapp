@@ -1,0 +1,530 @@
+<?php
+/**
+* @file
+* A description of what your module does.
+*/
+require_once('class/SugarModel.inc');
+require_once('class/SugarJCRMTime.inc');
+require_once('class/SugarVehicle.inc');
+require_once('class/SugarCase.inc');
+require_once('class/SugarAccount.inc');
+require_once('class/SugarConnector.inc');
+require_once("lib/nusoap.php");
+
+/**
+ * Implements menu_hook().
+ * @return array
+ */
+function sugarcrm_menu(){
+    $item = array();
+
+    //Admin configuration group
+    $item["admin/config/sugarcrm"] = array(
+        'title' => 'SugarCRM',
+        'description' => 'Administer SugarCRM settings',
+        'access arguments' => array("user access")
+    );
+
+    //Admin configuration settings
+    $item["admin/config/sugarcrm/manage"] = array(
+        'title' => 'SugarCRM settings',
+        'description' => 'Manage SugarCRM settings',
+        'access arguments' => array("user access"),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array("sugarcrm_admin_settings_form")
+    );
+
+    return $item;
+}
+
+/**
+ * Implements hook_form()
+ * @param $node
+ * @param $form_state
+ *
+ * @return array
+ */
+function sugarcrm_admin_settings_form($node, &$form_state){
+    $form = array();
+
+    $form['overview'] = array(
+        '#markup' => t("This interface allows you to manage general sugarcrm settings"),
+        '#prefix' => "<p>",
+        '#suffix' => "</p>"
+    );
+
+    $form['sugarcrm_username'] = array(
+        '#title' => t("Username"),
+        '#type' => 'textfield',
+        '#required' => true,
+        '#default_value' => variable_get("sugarcrm_username")
+    );
+
+    $form['sugarcrm_password'] = array(
+        '#title' => t("Password"),
+        '#type' => 'password',
+        '#required' => true,
+        '#default_value' => variable_get("sugarcrm_password")
+    );
+
+    $form['sugarcrm_max_rows'] = array(
+        '#title' => t("Rows per run"),
+        '#type' => 'textfield',
+        '#required' => true,
+        '#default_value' => variable_get("sugarcrm_max_rows", SugarConnector::MAX_ROWS)
+    );
+
+    return system_settings_form($form);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function sugarcrm_cron() {
+
+
+
+  try {
+    $username = variable_get('sugarcrm_username');
+    $password = variable_get('sugarcrm_password');
+    $timeoffset = variable_get('sugarcrm_offset_jcrmtime', 0);
+    $caseoffset = variable_get('sugarcrm_offset_case', 0);
+      $accountoffset = variable_get('sugarcrm_offset_account', 0);
+      $vehicleoffset = variable_get('sugarcrm_offset_vehicle', 0);
+    $max_rows = variable_get('sugarcrm_max_rows', SugarConnector::MAX_ROWS);
+    $client = new SugarConnector($username, $password);
+    $client->connect();
+
+
+    $cases = $client->get_cases($caseoffset, $max_rows);
+    foreach ($cases as $case) {
+      _sugarcrm_manage_case($case);
+        error_log("Case = " .$case, 0);
+    }
+
+    if (count($cases) == 0) $caseoffset = 0;
+    else $caseoffset += $max_rows;
+	$cases = null;
+	
+
+    $time = $client->get_jcrmtime($timeoffset, $max_rows);
+    foreach ($time as $t) {
+      _sugarcrm_manage_entry($t);
+
+        error_log("T = " . $t, 0);
+    }
+
+	if (count($time) == 0) $timeoffset = 0;
+    else $timeoffset += $max_rows;
+
+	$time = null;
+
+      //_sugarcrm_manage_case_field($cases);
+
+      $accounts = $client->get_accounts($accountoffset, $max_rows);
+      foreach ($accounts as $a) {
+          _sugarcrm_manage_account($a);
+      }
+
+      if (count($accounts) == 0) $accountoffset = 0;
+      else $accountoffset += $max_rows;
+
+      $accounts = null;
+
+
+
+      //_sugarcrm_manage_case_field($cases);
+
+      $vehicles = $client->get_vehicles($vehicleoffset, $max_rows);
+
+      watchdog("SugarCRM",
+          "Vehicles {$vehicles}",
+          $variables = array(),
+          $severity = WATCHDOG_NOTICE,
+          $link = NULL);
+
+      foreach ($vehicles as $vehicle) {
+          _sugarcrm_manage_vehicle($vehicle);
+      }
+
+      if (count($vehicles) == 0) $vehicleoffset = 0;
+      else $vehicleoffset += $max_rows;
+
+      $vehicles = null;
+	
+    variable_set('sugarcrm_offset_jcrmtime', $timeoffset);
+    variable_set('sugarcrm_offset_case', $caseoffset);
+    variable_set('sugarcrm_offset_account', $accountoffset);
+    variable_set('sugarcrm_offset_vehicle', $vehicleoffset);
+  }
+  catch (Exception $e) {
+
+    drupal_set_message($e->getMessage(), 'error');
+  }
+}
+
+//function _sugarcrm_manage_case_field($cases){
+//// Get the field info
+//    $info = field_info_field('field_allowed_cases');
+//// Get a reference to the values
+//    $values = &$info['settings']['allowed_values'];
+//// Manipulate the values
+//    foreach ($cases as $entry) {
+//        $values[$entry->id] = utf8_encode($entry->name);
+//    }
+//// Save the field
+//    field_update_field($info);
+//}
+
+function _sugarcrm_manage_case($entry){
+    //check if exists
+    $query = new EntityFieldQuery();
+    $result = $query
+        ->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'sugarcrm_case')
+        ->fieldCondition('field_sugar_id', 'value', $entry->id, '=')
+        ->execute();
+    if($result){
+        //exist
+        //update
+        $param = array_keys($result['node']);
+        $node = node_load(array_shift($param));
+        if($node != false){
+            if(_sugarcrm_compare_case_data($node, $entry) == false){
+                $node = _sugarcrm_set_case_fields($node, $entry);
+                node_save($node);
+				$node = null;
+            }
+        }
+    }
+    else{
+        //does not exist
+        //create
+        $node = _sugarcrm_create_case($entry);
+        $node = node_submit($node);
+        node_save($node);
+		$node = null;
+    }
+	$query = null;
+	$result = null;
+
+}
+
+/**
+ * Manage entries.
+ * @param $entry
+ */
+function _sugarcrm_manage_entry($entry){
+
+
+    //check if exists
+    $query = new EntityFieldQuery();
+    $result = $query
+        ->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'sugar_jcrmtime')
+        ->fieldCondition('field_sugar_id', 'value', $entry->id, '=')
+        ->execute();
+
+
+    if($result){
+        //exist
+        //update
+        $param = array_keys($result['node']);
+        $node = node_load(array_shift($param));
+        if($node != false){
+            if(_sugarcrm_compare_node_data($node, $entry) == false){
+                $node = _sugarcrm_set_node_fields($node, $entry);
+                node_save($node);
+                _sugarcrm_bind_to_case($node);
+            }
+        }
+    }
+    else{
+        //does not exist
+        //create
+        $node = _sugarcrm_create_node($entry);
+        $node = node_submit($node);
+        node_save($node);
+        _sugarcrm_bind_to_case($node);
+        //debug($node->nid);
+    }
+	$query = null;
+	$result = null;
+}
+
+/**
+ * Manage sugarcrm account
+ * @param $account SugarAccount
+ */
+function _sugarcrm_manage_account($account){
+    //check if exists
+    $query = new EntityFieldQuery();
+    $result = $query
+        ->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'sugarcrm_account')
+        ->fieldCondition('field_sugar_account_id', 'value', $account->id, '=')
+        ->execute();
+    if($result){
+        //exist
+        //update
+        $param = array_keys($result['node']);
+        $node = node_load(array_shift($param));
+        if($node != false){
+            if(_sugarcrm_compare_account_data($node, $account) == false){
+                $node = _sugarcrm_set_account_fields($node, $account);
+                node_save($node);
+                _sugarcrm_bind_case_to_account($node);
+            }
+        }
+    }
+    else{
+        //does not exist
+        //create
+        $node = _sugarcrm_create_account($account);
+        $node = node_submit($node);
+        node_save($node);
+        _sugarcrm_bind_case_to_account($node);
+    }
+    $query = null;
+    $result = null;
+}
+
+/**
+ * Manage sugarcrm account
+ * @param $account SugarAccount
+ */
+function _sugarcrm_manage_vehicle($vehicle){
+    //check if exists
+    $query = new EntityFieldQuery();
+    $result = $query
+                    ->entityCondition('entity_type', 'node')
+                    ->entityCondition('bundle', 'sugarcrm_vehicle')
+                    ->fieldCondition('field_sugar_vehicle_id', 'value', $vehicle->id, '=')
+                    ->execute();
+    if($result){
+        //exist
+        //update
+        $param = array_keys($result['node']);
+        $node = node_load(array_shift($param));
+        if($node != false){
+            if(_sugarcrm_compare_account_data($node, $vehicle) == false){
+                $node = _sugarcrm_set_account_fields($node, $vehicle);
+                node_save($node);
+                _sugarcrm_bind_case_to_account($node);
+            }
+        }
+    }
+    else{
+        //does not exist
+        //create
+        $node = _sugarcrm_create_vehicle($vehicle);
+        $node = node_submit($node);
+        node_save($node);
+        _sugarcrm_bind_case_to_account($node);
+    }
+    $query = null;
+    $result = null;
+}
+
+/**
+ * bind cases to account node
+ * @param $node
+ */
+function _sugarcrm_bind_case_to_account($node){
+  $query = new EntityFieldQuery();
+  $result = $query
+    ->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'sugarcrm_case')
+    ->fieldCondition('field_sugar_case_account_id', 'value', $node->field_sugar_account_id['und'][0]['value'], '=')
+    ->execute();
+
+  if($result){
+    //exist
+    $param = array_keys($result['node']);
+    $targets = array();
+    foreach ($param as $id) {
+      $targets[] = array('target_id' => $id);
+    }
+    $node->field_sugar_account_cases['und'] = $targets;
+    node_save($node);
+	$node = null;
+  }
+	$query = null;
+	$result = null;
+}
+
+/**
+ * bind jcrmtime to case.
+ * @param $node
+ */
+function _sugarcrm_bind_to_case($node){
+    $query = new EntityFieldQuery();
+    $result = $query
+        ->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'sugarcrm_case')
+        ->fieldCondition('field_sugar_id', 'value', $node->field_sugar_case_id['und'][0]['value'], '=')
+        ->execute();
+    if($result){
+        //exist
+        $param = array_keys($result['node']);
+        $node->field_sugar_case['und'][0]['target_id'] = array_shift($param);
+        node_save($node);
+		$node = null;
+    }
+	$query = null;
+	$result = null;
+}
+
+/**
+ * @param $node
+ * @param $entry SugarJCRMTime
+ */
+function _sugarcrm_compare_node_data($node, $entry){
+    if($node->field_sugar_case_id['und'][0]['value']            != $entry->case_id)         return false;
+    if($node->field_sugar_case_name['und'][0]['value']          != utf8_encode($entry->case_name))return false;
+    if($node->field_sugar_created_by_name['und'][0]['value']    != $entry->created_by_name) return false;
+    if(isset($node->field_sugar_date['und']))
+        if($node->field_sugar_date['und'][0]['value']               != _sugarcrm_convert_date($entry->date))return false;
+    if($node->field_sugar_time_length['und'][0]['value']        != $entry->time_length)     return false;
+    if($node->field_sugar_description['und'][0]['value']        != utf8_encode($entry->description))return false;
+    return true;
+}
+
+/**
+ * @param $node
+ * @param $entry SugarCase
+ * @return bool
+ */
+function _sugarcrm_compare_case_data($node, $entry){
+    if($node->field_sugar_id['und'][0]['value']             != $entry->id)               return false;
+    if($node->field_sugar_name['und'][0]['value']           != utf8_encode($entry->name))return false;
+    if($node->field_sugar_max_hours_c['und'][0]['value']    != $entry->max_hours_c)      return false;
+    if($node->field_sugar_reg_hours_c['und'][0]['value']    != $entry->reg_hours_c)      return false;
+    if($node->field_sugar_rest_hours_c['und'][0]['value']   != $entry->rest_hours_c)     return false;
+    if($node->field_sugar_case_account_id['und'][0]['value']!= $entry->account_id)       return false;
+    return true;
+}
+
+/**
+ * @param $node
+ * @param $account SugarAccount
+ * @return bool
+ */
+function _sugarcrm_compare_account_data($node, $account){
+  if($node->field_sugar_account_id['und'][0]['value']             != $account->id)               return false;
+  if($node->field_sugar_account_name['und'][0]['value']           != utf8_encode($account->name))return false;
+  return true;
+}
+/**
+ * Creates node from given SugarJCRMTime.
+ * @param $entry SugarJCRMTime
+ * @return StdClass
+ */
+function _sugarcrm_create_node($entry){
+    $node = new StdClass();
+    $node->type = 'sugar_jcrmtime';
+    $node->promote = 0;
+    node_object_prepare($node);
+    $node->title = 'SugarJCRMTime ' . $entry->id;
+    $node->language = LANGUAGE_NONE;
+    $node = _sugarcrm_set_node_fields($node, $entry);
+    return $node;
+}
+
+function _sugarcrm_create_case($entry){
+    $node = new StdClass();
+    $node->type = 'sugarcrm_case';
+    $node->promote = 0;
+    node_object_prepare($node);
+    $node->title = 'SugarCRM Case: ' . utf8_encode($entry->name);
+    $node->language = LANGUAGE_NONE;
+    $node = _sugarcrm_set_case_fields($node, $entry);
+    return $node;
+}
+
+function _sugarcrm_create_account($account){
+    $node = new StdClass();
+    $node->type = 'sugarcrm_account';
+    $node->promote = 0;
+    node_object_prepare($node);
+    $node->title = 'SugarCRM Account: ' . utf8_encode($account->name);
+    $node->language = LANGUAGE_NONE;
+    $node = _sugarcrm_set_account_fields($node, $account);
+    return $node;
+}
+
+function _sugarcrm_create_vehicle($vehicle){
+    $node = new StdClass();
+    $node->type = 'sugarcrm_vehicle';
+    $node->promote = 0;
+    node_object_prepare($node);
+    $node->title = 'SugarCRM Vehicle: ' . utf8_encode($vehicle->name);
+    $node->language = LANGUAGE_NONE;
+    $node = _sugarcrm_set_vehicle_fields($node, $vehicle);
+    return $node;
+}
+
+function _sugarcrm_convert_date($date){
+    $time = strtotime($date);
+    return date("Y-m-d H:i:s", $time);
+}
+
+/**
+ * Sets fields of given node
+ * @param $node
+ * @param $entry SugarJCRMTime
+ * @return mixed
+ */
+function _sugarcrm_set_node_fields($node, $entry){
+    $node->field_sugar_id['und'][0]['value']                 = $entry->id;
+    $node->field_sugar_case_id['und'][0]['value']            = $entry->case_id;
+    $node->field_sugar_case_name['und'][0]['value']          = utf8_encode($entry->case_name);
+    $node->field_sugar_created_by_name['und'][0]['value']    = $entry->created_by_name;
+    $node->field_sugar_date['und'][0]['value']               = _sugarcrm_convert_date($entry->date);
+    $node->field_sugar_time_length['und'][0]['value']        = $entry->time_length;
+    $node->field_sugar_description['und'][0]['value']        = utf8_encode($entry->description);
+    return $node;
+}
+
+
+
+/**
+ * @param $node
+ * @param $entry SugarCase
+ * @return mixed
+ */
+function _sugarcrm_set_case_fields($node, $entry){
+    $node->field_sugar_id['und'][0]['value']             = $entry->id;
+    $node->field_sugar_name['und'][0]['value']           = utf8_encode($entry->name);
+    $node->field_sugar_max_hours_c['und'][0]['value']    = $entry->max_hours_c;
+    $node->field_sugar_reg_hours_c['und'][0]['value']    = $entry->reg_hours_c;
+    $node->field_sugar_rest_hours_c['und'][0]['value']   = $entry->rest_hours_c;
+    $node->field_sugar_case_account_id['und'][0]['value']= $entry->account_id;
+    return $node;
+}
+
+
+
+/**
+ * @param $node
+ * @param $account SugarAccount
+ * @return mixed
+ */
+function _sugarcrm_set_account_fields($node, $account){
+    $node->field_sugar_account_id['und'][0]['value']             = $account->id;
+    $node->field_sugar_account_name['und'][0]['value']           = utf8_encode($account->name);
+    return $node;
+}
+
+
+
+/**
+ * @param $node
+ * @param $account SugarAccount
+ * @return mixed
+ */
+function _sugarcrm_set_vehicle_fields($node, $vehicle){
+    $node->field_sugar_vehicle_id['und'][0]['value']             = $vehicle->id;
+    $node->field_sugar_vehicle_name['und'][0]['value']           = utf8_encode($vehicle->name);
+    return $node;
+}

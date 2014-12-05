@@ -1,0 +1,57 @@
+// |--------------------------------------------------------------------------
+// | Modalizr
+// |--------------------------------------------------------------------------
+// |
+
+
+    // Modalizr
+    #modalizr {
+        .transition( all @modal-animation-time ease-in-out );
+
+
+        // Fade
+        &.fade {
+
+
+            // Dialog
+            .modal-dialog {
+                .translate( 0, 0 );
+                .transition-transform( none );
+            }
+        }
+
+
+        // Show animation
+        &.show-animation {
+
+
+            // Dialog
+            .modal-dialog {
+                -webkit-animation-name: modalBounceIn;
+                -moz-animation-name: modalBounceIn;
+                animation-name: modalBounceIn;
+                animation-duration: @modal-animation-time;
+                -webkit-animation-duration: @modal-animation-time;
+            }
+        }
+
+
+        // Remove animation
+        &.remove-animation {
+
+
+            // Dialog
+            .modal-dialog {
+                -webkit-animation-name: modalBounceOut;
+                -moz-animation-name: modalBounceOut;
+                animation-name: modalBounceOut;
+                animation-duration: @modal-animation-time;
+                -webkit-animation-duration: @modal-animation-time;
+            }
+        }
+    }
+
+
+    .modal-backdrop {
+        .transition( all .5s ease-in-out );
+    }

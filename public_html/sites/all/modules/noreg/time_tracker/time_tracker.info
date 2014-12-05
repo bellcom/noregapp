@@ -1,0 +1,3 @@
+name = "TimeTracker"
+description = "<strong>Tracks time.</strong>"
+core = "7.x"

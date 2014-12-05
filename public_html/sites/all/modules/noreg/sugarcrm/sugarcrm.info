@@ -1,0 +1,6 @@
+name = SugarCRM
+description = SugarCRM sync.
+core = 7.x
+version = 7.x
+configure = admin/config/sugarcrm/manage
+dependencies[] = sugarcrm_feature

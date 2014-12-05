@@ -1,0 +1,16 @@
+<?php
+/**
+ * Implements hook_install()
+ */
+function sugarcrm_install(){
+    variable_set("sugarcrm_username", "");
+    variable_set("sugarcrm_password", "");
+}
+
+/**
+ * Implements hook_uninstall
+ */
+function sugarcrm_uninstall(){
+    variable_del("sugarcrm_username");
+    variable_del("sugarcrm_password");
+}
