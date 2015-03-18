@@ -213,16 +213,6 @@ function officina_sugarcrm_cron() {
 
         variable_set('sugarcrm_timestamp_offset', $timestamp_offset);
 
-
-
-
-
-
-
-
-
-
-
     }
 
     // An error occured
